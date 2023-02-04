@@ -1,5 +1,5 @@
 # project-a-07
-Project created and implemented in Fall 2022 with Justin Brady, Colin Meek, Gillian Morrissey, and Ben Tyeryar.
+Project created and implemented in Fall 2022, working with Justin Brady, Colin Meek, Gillian Morrissey, and Ben Tyeryar.
 
 project-a-07 created by GitHub Classroom
 This is our repository for our recreation of Lous List
