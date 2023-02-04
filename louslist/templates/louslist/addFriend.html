@@ -1,0 +1,112 @@
+{% load socialaccount %}
+
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+
+<html>
+<head>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'louslist:index' %}">Lou's List</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'louslist:search' %}">Search</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'louslist:schedule' %}">Schedule Builder</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'louslist:friendPage' %}">Friends</a>
+              </li>
+
+            <!-- <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Departments</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">CS</a>
+                <a class="dropdown-item" href="#">ECE</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">More Here</a>
+              </div>
+            </li> -->
+          </ul>
+          {% if user.is_authenticated %}
+          <div>Welcome, {{ user.username }}!</div>
+          <form class="form-inline my-2 my-lg-0" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Log out</button>
+          </form>
+          {% else %}
+          <form class="form-inline my-2 my-lg-0" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Log in</button>
+          </form>
+          {% endif %}
+        </div>
+      </nav>
+</head>
+
+<body>
+
+<!--
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    Select a user to friend
+  </button>
+    {%if user_list%}
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      {%for user in user_list%}
+      <li><a class="dropdown-item" href="{%url 'louslist:send_friend_request' user.username%}">{{user.username}}</a></li>
+    </ul>
+      {%endfor%}
+    {%endif%}
+</div>
+-->
+<div class="row">
+  <div class="col text-center">
+    <br>
+    <h2 class = "text-center">Send a Friend Request:</h2>
+    <br>
+    {%if user_list%}
+      <div class="row" style="min-height:50px">
+          {%for user in user_list%}
+                {% if forloop.first %}<div class="col text-center">{% endif %}
+                <div><a class="btn btn-danger text-bold" href="{%url 'louslist:send_friend_request' user.username%}" role="button">{{user.username}}</a></div><br>
+
+                {% if forloop.counter|divisibleby:5 %}<br></div><div class="col text-center">{% endif %}
+                {% if forloop.last %}</div>{% endif %}
+
+          {% endfor %}
+      </div>
+      {% endif %}
+      {%if pending_requests%}
+      <div class="col text-center">
+        <h2 class = "text-center">Pending Friend Requests</h2>
+        <div class="col text-center">
+          {%for req in pending_requests%}
+          
+            <div class="col text-center">
+              <form action="{% url 'louslist:cancel_request' req.to_user %}" method="POST" name="cancel_request">
+                {% csrf_token %}
+                {{req.to_user}}
+                <button type = "submit" class = "btn btn-outline-danger btn-sm ">Cancel</button>
+              </form>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+    </div>
+    
+    </div>
+
+</body>
+
+</html>

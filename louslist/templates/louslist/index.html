@@ -1,0 +1,94 @@
+<!--
+Citation:
+Title: Test Social Authentication
+URL: https://dev.to/mdrhmn/django-google-authentication-using-django-allauth-18f8
+-->
+
+{% load socialaccount %}
+
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<html>
+  <head>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'louslist:index' %}">Lou's List</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'louslist:search' %}">Search</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'louslist:schedule' %}">Schedule Builder</a>
+              </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'louslist:friendPage' %}">Friends</a>
+            </li>
+
+            <!-- <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Departments</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">CS</a>
+                <a class="dropdown-item" href="#">ECE</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">More Here</a>
+              </div>
+            </li> -->
+          </ul>
+          {% if user.is_authenticated %}
+          <div>Welcome, {{ user.username }}!</div>
+          <form class="form-inline my-2 my-lg-0" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Log out</button>
+          </form>
+          {% else %}
+          <form class="form-inline my-2 my-lg-0" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Log in</button>
+          </form>
+          {% endif %}
+        </div>
+      </nav>
+</head>
+<body>
+    <br>
+
+    <!--{% if user.is_authenticated %}-->
+    <ul>
+
+
+
+    <!--{% else %}
+
+    <p>Please login to proceed to site</p>
+
+
+    {% endif %}-->
+
+
+        <br>
+      <h2 class = "text-center">Choose a department to view:</h2>
+      <br>
+
+      {% if dept_list %}
+        <div class="row">
+        {% for dept in dept_list %}
+                {% if forloop.first %}<div class="col-sm-1 text-center">{% endif %}
+                <div><a href="{% url 'louslist:course_list' dept.subject %}">{{ dept.subject }}</a></div>
+
+                {% if forloop.counter|divisibleby:19 %}<br></div><div class="col-sm-1 text-center">{% endif %}
+                {% if forloop.last %}</div>{% endif %}
+
+        {% endfor %}
+        </div>
+      {% endif %}
+    </ul>
+
+</body>
+
+</html>

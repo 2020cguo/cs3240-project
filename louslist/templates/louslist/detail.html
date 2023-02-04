@@ -1,0 +1,144 @@
+{% load socialaccount %}
+
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+
+<html>
+    <head>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'louslist:index' %}">Lou's List</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:search' %}">Search</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:schedule' %}">Schedule Builder</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:friendPage' %}">Friends</a>
+                </li>
+                <!-- <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Departments
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">CS</a>
+                    <a class="dropdown-item" href="#">ECE</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">More Here</a>
+                  </div>
+                </li> -->
+              </ul>
+              {% if user.is_authenticated %}
+              <div>Welcome, {{ user.username }}!</div>
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log out</button>
+              </form>
+              {% else %}
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log in</button>
+              </form>
+              {% endif %}
+            </div>
+          </nav>
+    </head>
+<body>
+    <br>
+
+      {% if course_list %}
+      {% for query in course_list %}
+
+
+  
+          {% for item in query %}
+            {% ifchanged item.subject %}
+            <h2 class = "text-center">Department: {{item.subject}}</h2>
+            <br>
+            {% endifchanged %}
+
+          <!-- This is where we can access any part of all the elements so we just gotta figure out how to make it look good
+          also maybe we only display the first couple or something? -->
+  
+          {% ifchanged item.description %}
+  
+          <div class="container text-center">
+              <div class="row border">
+                  <div class="col">
+                      <div class="row">
+                          <div class="col-1.8 bg-light text-nowrap h3">
+                              {{item.subject}} {{item.catalog_number}}
+                          </div>
+                          <div class="col bg-light text-left h3">
+                              {{item.description}}
+                          </div>
+                      </div>
+                      {% for item2 in query %}
+                          {% if item.description == item2.description %}
+  
+                                  <div class="row">
+                                      <div class="col-md-auto">
+                                          {{item2.course_section}}-{{item2.component}} ({{item2.course_number}})
+                                      </div>
+                                      <div class="col-md-auto">
+                                          {{item2.units}} Units
+                                      </div>
+                                      <div class="col">
+                                          {{item2.instructor_name}}
+                                      </div>
+                                      <div class="col">
+                                          Enrolled: {{item2.enrollment_total}} / {{item2.class_capacity}}
+                                      </div>
+                                      <div class="col">
+                                          Wait List: {{item2.wait_list}} / {{item2.wait_cap}}
+                                      </div>
+                                      <div class="col">
+                                          {% if item2.start_time %}
+                                              {{item2.days}} {{item2.start_time}}-{{item2.end_time}}
+                                          {% else %}
+                                              -
+                                          {% endif %}
+                                      </div>
+  
+                                      <div class="col">
+                                          {{item2.facility_description}}
+                                      </div>
+                                      {% if user.is_authenticated %}
+                                        <form action="{% url 'louslist:add_class' item2.course_number %}" method="POST" name="add_class" id="{{item.course_number}}">
+                                          {% csrf_token %}
+                                          <button type = "submit" class = "btn btn-outline-danger btn-sm ">ADD</button>
+                                        </form>
+                                      {% endif %}
+                                  </div>
+  
+                          {% endif %}
+  
+                      {% endfor %}
+  
+                  </div>
+              </div>
+          </div>
+          <br>
+  
+          {% endifchanged %}
+  
+  
+          <!--<p>{{item.description}} {{item.instructor_name}} {{item.course_section}}</p>-->
+          {% endfor %}
+      {% endfor %}
+      {% endif %}
+
+    
+
+</body>
+
+</html>

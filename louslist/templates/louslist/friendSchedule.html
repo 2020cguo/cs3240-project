@@ -1,0 +1,235 @@
+{% load socialaccount %}
+
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<html>
+    <head>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'louslist:index' %}">Lou's List</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:search' %}">Search</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:schedule' %}">Schedule Builder</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'louslist:friendPage' %}">Friends</a>
+                  </li>
+
+                <!-- <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Departments</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">CS</a>
+                    <a class="dropdown-item" href="#">ECE</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">More Here</a>
+                  </div>
+                </li> -->
+              </ul>
+              {% if user.is_authenticated %}
+              <div>Welcome, {{ user.username }}!</div>
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log out</button>
+              </form>
+              {% else %}
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log in</button>
+              </form>
+              {% endif %}
+            </div>
+          </nav>
+    </head>
+<body>
+    {% if user.is_authenticated %}
+
+    <br>
+    {% if error_message %}
+    <h2 class = "text-center">{{error_message}}</h2>
+    {% else %}
+    <h2 class = "text-center">{{username}}'s Schedule</h2>
+    {% endif %}
+    <br>
+    <div class="row">
+
+        <div class="col">
+            {% if times %}
+            {% for x in times %}
+                {% if forloop.first %}
+                    <div class="container">
+                        <div class="container row">
+                            <div class="col col-auto border border-white text-center text-white" style="min-width:9%" > 00:00 </div>
+                            <div class="col border border-danger text-center">Monday</div>
+                            <div class="col border border-danger text-center">Tuesday</div>
+                            <div class="col border border-danger text-center">Wednesday</div>
+                            <div class="col border border-danger text-center">Thursday</div>
+                            <div class="col border border-danger text-center">Friday</div>
+                        </div>
+                {% else %}
+                    <div class=" container row">
+
+
+                        <div class="col col-auto border text-center" style="min-width:9%">{{ x }}</div>
+
+                        {% for day in days%}
+
+                        {% if day in course_schedule.0.days and starts.0 == forloop.parentloop.counter%}<div class="col border-left border-right border-top text-center" style="background-color: B2EBF2">{{course_schedule.0.subject}} {{course_schedule.0.catalog_number}}</div>
+                        {% elif day in course_schedule.1.days and starts.1 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: DCEDC8">{{course_schedule.1.subject}} {{course_schedule.1.catalog_number}}</div>
+                        {% elif day in course_schedule.2.days and starts.2 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: E0F7FA">{{course_schedule.2.subject}} {{course_schedule.2.catalog_number}}</div>
+                        {% elif day in course_schedule.3.days and starts.3 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: C5E1A5">{{course_schedule.3.subject}} {{course_schedule.3.catalog_number}}</div>
+                        {% elif day in course_schedule.4.days and starts.4 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: A5D6A7">{{course_schedule.4.subject}} {{course_schedule.4.catalog_number}}</div>
+                        {% elif day in course_schedule.5.days and starts.5 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: BBDEFB">{{course_schedule.5.subject}} {{course_schedule.5.catalog_number}}</div>
+                        {% elif day in course_schedule.6.days and starts.6 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: 90CAF9">{{course_schedule.6.subject}} {{course_schedule.6.catalog_number}}</div>
+                        {% elif day in course_schedule.7.days and starts.7 == forloop.parentloop.counter %}<div class="col border-left border-right border-top text-center" style="background-color: F3E5F5">{{course_schedule.7.subject}} {{course_schedule.7.catalog_number}}</div>
+
+                        {% elif day in course_schedule.0.days and starts.0 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: B2EBF2">{{course_schedule.0.start_time|slice:5}}-{{course_schedule.0.end_time}}</div>
+                        {% elif day in course_schedule.1.days and starts.1 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: DCEDC8">{{course_schedule.1.start_time|slice:5}}-{{course_schedule.1.end_time}}</div>
+                        {% elif day in course_schedule.2.days and starts.2 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: E0F7FA">{{course_schedule.2.start_time|slice:5}}-{{course_schedule.2.end_time}}</div>
+                        {% elif day in course_schedule.3.days and starts.3 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: C5E1A5">{{course_schedule.3.start_time|slice:5}}-{{course_schedule.3.end_time}}</div>
+                        {% elif day in course_schedule.4.days and starts.4 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: A5D6A7">{{course_schedule.4.start_time|slice:5}}-{{course_schedule.4.end_time}}</div>
+                        {% elif day in course_schedule.5.days and starts.5 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: BBDEFB">{{course_schedule.5.start_time|slice:5}}-{{course_schedule.5.end_time}}</div>
+                        {% elif day in course_schedule.6.days and starts.6 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: 90CAF9">{{course_schedule.6.start_time|slice:5}}-{{course_schedule.6.end_time}}</div>
+                        {% elif day in course_schedule.7.days and starts.7 == forloop.parentloop.counter|add:"-1" %}<div class="col border-left border-right text-nowrap text-center" style="background-color: F3E5F5">{{course_schedule.7.start_time|slice:5}}-{{course_schedule.7.end_time}}</div>
+
+                        {% elif day in course_schedule.0.days and starts.0 <= forloop.parentloop.counter and ends.0 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: B2EBF2"></div>
+                        {% elif day in course_schedule.1.days and starts.1 <= forloop.parentloop.counter and ends.1 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: DCEDC8"></div>
+                        {% elif day in course_schedule.2.days and starts.2 <= forloop.parentloop.counter and ends.2 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: E0F7FA"></div>
+                        {% elif day in course_schedule.3.days and starts.3 <= forloop.parentloop.counter and ends.3 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: C5E1A5"></div>
+                        {% elif day in course_schedule.4.days and starts.4 <= forloop.parentloop.counter and ends.4 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: A5D6A7"></div>
+                        {% elif day in course_schedule.5.days and starts.5 <= forloop.parentloop.counter and ends.5 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: BBDEFB"></div>
+                        {% elif day in course_schedule.6.days and starts.6 <= forloop.parentloop.counter and ends.6 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: 90CAF9"></div>
+                        {% elif day in course_schedule.7.days and starts.7 <= forloop.parentloop.counter and ends.7 > forloop.parentloop.counter %}<div class="col border-left border-right" style="background-color: F3E5F5"></div>
+
+                        {% elif day in course_schedule.0.days and ends.0 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: B2EBF2"></div>
+                        {% elif day in course_schedule.1.days and ends.1 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: DCEDC8"></div>
+                        {% elif day in course_schedule.2.days and ends.2 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: E0F7FA"></div>
+                        {% elif day in course_schedule.3.days and ends.3 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: C5E1A5"></div>
+                        {% elif day in course_schedule.4.days and ends.4 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: A5D6A7"></div>
+                        {% elif day in course_schedule.5.days and ends.5 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: BBDEFB"></div>
+                        {% elif day in course_schedule.6.days and ends.6 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: 90CAF9"></div>
+                        {% elif day in course_schedule.7.days and ends.7 == forloop.parentloop.counter %}<div class="col border-left border-right border-bottom" style="background-color: F3E5F5"></div>
+
+
+                        {% else %}<div class="col border text-center text-white "></div>{% endif %}
+
+
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+                {% if forloop.last%}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="col col-md-auto">
+            {% if course_schedule %}
+            {% for item in course_schedule %}
+
+                <div class="container text-center align-items-left">
+                    <div class="row border">
+                            <div class="col-1.8 bg-light text-nowrap h5">
+                                {{item.subject}} {{item.catalog_number}}
+                            </div>
+                            <div class="col bg-light text-left h5">
+                                {{item.description}}
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-auto text-left">
+                             {{item.course_section}}-{{item.component}} ({{item.course_number}})
+                        </div>
+
+                        <div class="col text-left">
+                             {{item.instructor_name}}
+                        </div>
+                        <div class="col text-left ">
+                             {{item.facility_description}}
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col text-left">
+                             {{item.units}} Units
+                        </div>
+                        <div class="col text-left text-nowrap">
+                             Enrolled: {{item.enrollment_total}} / {{item.class_capacity}}
+                        </div>
+                        <div class="col text-left text-nowrap">
+                             Waitlist : {{item.wait_list}} / {{item.wait_cap}}
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <br>
+
+            {% endfor %}
+            {% endif %}
+
+        </div>
+        <div class="col" style="max-width:1%"></div>
+    </div>
+
+    <br>
+    <br>
+    <form class = "text-center" action="{% url 'louslist:submit_comment' username %}" method="POST">
+    <div class="container">
+      {% csrf_token %}
+    <input type = "text" name="comment" placeholder="Type your comment here!" class="col-sm-11">
+    <button type = "submit" class = "btn-danger btn-sm">POST</button>
+    </div>
+    </form>
+    {% if comments %}
+    <div class="container">
+      <h2>Comments</h2>            
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Poster</th>
+            <th>Time</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comment in comments%}
+          <tr>
+            <form class = "text-center" action="{% url 'louslist:delete_comment' username %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{comment.id}}">
+            <td>{{comment.poster}}</td>
+            <td>{{comment.time}}</td>
+            <td>{{comment.content}}</td>
+            {% if comment.poster == user %}
+            <td><button type = "submit" class = "btn btn-outline-danger btn-sm ">DELETE</button></td>
+            {%endif%}
+            </form>
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+    </div>
+    {%endif%}
+    
+    {%else%}
+    <br>
+    <br>
+
+    <h2 class = "text-center">Please log in to add friends!</h2>
+
+    {% endif %}
+
+
+</body>
+</html>

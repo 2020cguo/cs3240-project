@@ -1,0 +1,112 @@
+{% load socialaccount %}
+
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<html>
+    <head>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'louslist:index' %}">Lou's List</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:search' %}">Search</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'louslist:schedule' %}">Schedule Builder</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'louslist:friendPage' %}">Friends</a>
+                  </li>
+
+                <!-- <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Departments</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">CS</a>
+                    <a class="dropdown-item" href="#">ECE</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">More Here</a>
+                  </div>
+                </li> -->
+              </ul>
+              {% if user.is_authenticated %}
+              <div>Welcome, {{ user.username }}!</div>
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log out</button>
+              </form>
+              {% else %}
+              <form class="form-inline my-2 my-lg-0" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Log in</button>
+              </form>
+              {% endif %}
+            </div>
+          </nav>
+    </head>
+<body>
+    {% if user.is_authenticated %}
+
+    <br>
+    <h2 class = "text-center">Your Friends:</h2>
+    <center><a class="btn btn-danger" href="{% url 'louslist:add_friend' %}" role="button">ADD FRIEND</a></center>
+    <br>
+    <div class="row">
+        <div class="col col-1"></div>
+        <div class="col text-center">
+            <h5>Friend Requests:</h5>
+            {% if friendRequest_list %}
+            <div>
+                {% for request in friendRequest_list %}
+                    <div class="row">
+                        <div class="col text-right">{{request.from_user}}</div>
+                        <div class="col col-2"><a class="btn btn-outline-danger btn-sm" href="{% url 'louslist:accept_friend_request' request.id%}" role="button">Accept</a></div>
+                        <div class="col text-left"><a class="btn btn-outline-danger btn-sm" href="{% url 'louslist:decline_friend_request' request.id%}" role="button">Decline</a></div><br><br>
+                    </div>
+                {% endfor %}
+            <br>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col text-center">
+            <h5>Current Friends:</h5>
+            {% if friend_list %}
+            <div>
+                {% for friend in friend_list %}
+                    <div class="row">
+                        <div class="col text-right">{{friend.friend2}}</div>
+                        <div class="col col-2"><a class="btn btn-outline-danger btn-sm" href="{% url 'louslist:friend_schedule' friend.friend2 %}" role="button">View Schedule</a></div>
+                        <div class="col text-left">
+                            <form action="{% url 'louslist:delete_friend' friend.friend2.username %}" method="POST" name="delete_friend" id="{{friend.friend2.username}}">
+                              {% csrf_token %}
+                              <button type = "submit" class = "btn btn-outline-danger btn-sm ">Remove</button>
+                            </form>
+
+                        </div><br>
+
+                    <br>
+                    </div>
+
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col col-1"></div>
+    </div>
+    {%else%}
+    <br>
+    <br>
+
+    <h2 class = "text-center">Please log in to add friends!</h2>
+
+    {% endif %}
+
+
+</body>
+</html>
